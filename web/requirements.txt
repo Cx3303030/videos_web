@@ -1,0 +1,9 @@
+# Django项目依赖
+Django==5.2.4
+# 数据库驱动
+# psycopg2-binary==2.9.9  # PostgreSQL驱动
+# mysqlclient==2.2.4  # MySQL驱动
+# 缓存
+redis==5.0.7
+# 其他工具
+django-extensions==3.2.3

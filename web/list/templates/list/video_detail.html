@@ -1,0 +1,251 @@
+{% extends "list/base.html" %}
+
+{% block title %}{{ video.title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- 视频播放区 -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">{{ video.title }}</h3>
+                </div>
+                
+                <div class="ratio ratio-16x9 bg-dark">
+                    <video controls preload="metadata" class="w-100">
+                        <source src="{{ video.video_file.url }}" type="video/mp4">
+                        您的浏览器不支持视频播放
+                    </video>
+                </div>
+                
+                <div class="card-body">
+                    <p>{{ video.description }}</p>
+                    <div class="d-flex justify-content-between text-muted small">
+                        <div>投稿人: {{ video.author.username }}</div>
+                        <div>发布于: {{ video.created_at|date:"Y-m-d" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 作品信息和投票区 -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="h5 mb-0">作品数据</h3>
+                </div>
+                <div class="card-body text-center py-4">
+                    <div class="d-flex justify-content-around mb-4">
+                        <div class="text-center">
+                            <div class="fs-1 fw-bold text-primary">{{ rank }}</div>
+                            <div class="small">当前排名</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="fs-1 fw-bold text-danger" id="vote-count">{{ video.votes }}</div>
+                            <div class="small">点赞数</div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        {% if request.user.is_authenticated %}
+                            {% if user_voted %}
+                                <button class="btn btn-outline-secondary" disabled>
+                                    <i class="bi bi-heart-fill"></i> 已投票
+                                </button>
+                            {% else %}
+                                <button class="btn btn-danger" id="vote-btn" data-video-id="{{ video.id }}">
+                                    <i class="bi bi-heart-fill"></i> 点赞支持
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-in-right"></i> 登录后投票
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h3 class="h5 mb-0">热门作品</h3>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for item in related_videos %}
+                    <a href="{% url 'video_detail' item.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{{ item.title|truncatechars:22 }}</span>
+                            <span class="badge bg-primary">{{ item.votes }}赞</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 投票状态提示 -->
+{% if request.user.is_authenticated %}
+<div id="vote-status" class="mt-2 small mb-3"></div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script>
+    // 从Django模板变量设置用户认证状态
+    window.userIsAuthenticated = JSON.parse("{% if request.user.is_authenticated %}true{% else %}false{% endif %}");
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取投票按钮和状态显示元素
+    const voteBtn = document.getElementById('vote-btn');
+    const voteStatus = document.getElementById('vote-status');
+    console.log('投票按钮元素:', voteBtn);
+    console.log('投票状态元素:', voteStatus);
+    console.log('用户认证状态:', window.userIsAuthenticated);
+    
+    // 检查今日剩余票数
+    function checkRemainingVotes() {
+        const checkVotesUrl = '/videos/check-votes/';
+        console.log('发送剩余票数请求到:', checkVotesUrl);
+        fetch(checkVotesUrl, {
+            method: 'GET',
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log('剩余票数请求响应状态:', response.status, response.statusText);
+            if (!response.ok) {
+                throw new Error('网络响应异常');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('剩余票数响应数据:', data);
+            if (data.remaining_votes !== undefined) {
+                voteStatus.innerHTML = `
+                    <span class="text-info">
+                        <i class="bi bi-info-circle"></i> 今日剩余 ${data.remaining_votes} 票
+                    </span>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('检查剩余票数失败:', error);
+            console.log('剩余票数错误详情:', error.stack);
+            if (voteStatus) {
+                voteStatus.innerHTML = `
+                    <span class="text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> 检查剩余票数失败，请稍后重试
+                    </span>
+                `;
+            }
+        });
+    }
+    
+    // 确保voteStatus元素存在才执行相关操作
+    if (voteStatus) {
+        if (window.userIsAuthenticated) {
+            checkRemainingVotes();
+        }
+    }
+    
+    if (voteBtn) {
+        voteBtn.addEventListener('click', function() {
+            const videoId = this.dataset.videoId;
+            const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (!csrfTokenElement) {
+                console.error('CSRF Token元素未找到');
+                if (voteStatus) {
+                    voteStatus.innerHTML = `
+                        <span class="text-danger">
+                            <i class="bi bi-exclamation-triangle"></i> 无法获取CSRF Token，请刷新页面重试
+                        </span>
+                    `;
+                }
+                // 恢复按钮状态
+                voteBtn.disabled = false;
+                voteBtn.innerHTML = '<i class="bi bi-heart-fill"></i> 点赞支持';
+                return;
+            }
+            const csrfToken = csrfTokenElement.value;
+            console.log('投票按钮被点击，视频ID:', videoId);
+            console.log('CSRF Token获取成功:', csrfToken ? '已获取' : '未获取');
+            
+            // 禁用按钮防止重复点击
+            voteBtn.disabled = true;
+            voteBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> 投票中...';
+            
+            // 发送投票请求到正确的URL
+            const voteUrl = `/videos/vote_video/${videoId}/`;
+            console.log('准备发送投票请求到:', voteUrl);
+            fetch(voteUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                console.log('投票请求响应状态:', response.status, response.statusText);
+                if (!response.ok) {
+                    throw new Error('网络响应异常');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('投票响应数据:', data);
+                // 更新UI
+                document.getElementById('vote-count').textContent = data.new_count;
+                
+                // 只有在voteStatus元素存在时才更新状态信息
+                if (voteStatus) {
+                    if (data.status === 'success') {
+                        // 显示成功信息
+                        voteStatus.innerHTML = `
+                            <span class="text-success">
+                                <i class="bi bi-check-circle"></i> ${data.message}
+                            </span>
+                        `;
+                        
+                        // 投票成功后，将按钮状态更新为"已投票"
+                        voteBtn.disabled = true;
+                        voteBtn.classList.remove('btn-danger');
+                        voteBtn.classList.add('btn-outline-secondary');
+                        voteBtn.innerHTML = '<i class="bi bi-heart-fill"></i> 已投票';
+                    } else {
+                        // 显示错误信息
+                        voteStatus.innerHTML = `
+                            <span class="text-danger">
+                                <i class="bi bi-exclamation-triangle"></i> ${data.message}
+                            </span>
+                        `;
+                        
+                        // 错误时恢复按钮状态
+                        voteBtn.disabled = false;
+                        voteBtn.innerHTML = '<i class="bi bi-heart-fill"></i> 点赞支持';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('投票请求失败:', error);
+                console.log('错误详情:', error.stack);
+                // 恢复按钮状态以便重试
+                voteBtn.disabled = false;
+                voteBtn.innerHTML = '<i class="bi bi-heart-fill"></i> 点赞支持';
+                // 只有在voteStatus元素存在时才更新状态信息
+                if (voteStatus) {
+                    voteStatus.innerHTML = `
+                        <span class="text-danger">
+                            <i class="bi bi-exclamation-triangle"></i> 网络请求失败，请稍后重试
+                        </span>
+                    `;
+                }
+                voteBtn.disabled = false;
+                voteBtn.innerHTML = '<i class="bi bi-heart-fill"></i> 点赞支持';
+            });
+        });
+    }
+});       
+
+</script>
+{% endblock %}

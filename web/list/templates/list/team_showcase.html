@@ -1,0 +1,325 @@
+{% extends "list/base.html" %}
+
+{% load static %}
+
+{% block title %}小队展示 - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- 页面标题 -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">社会实践小队展示</h1>
+        <p class="lead text-muted">探索非物质文化遗产的守护者</p>
+    </div>
+
+    <!-- 板块1: 小队介绍 -->
+    <div class="card shadow-lg mb-5">
+        <div class="card-header bg-primary text-white py-3">
+            <h2 class="h4 mb-0">
+                <i class="bi bi-people-fill me-2"></i>小队介绍
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center mb-4 mb-md-0">
+                    <div class="avatar-lg bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto">
+                        <img src="{{ MEDIA_URL }}images/touxiang.jpg" alt="团队头像" class="img-fluid rounded-circle" style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h3 class="h5">北京科技大学-华韵铸鼎-黔锦鎏光</h3>
+                    <p class="lead">
+                        我们团队聚焦贵州毕节非遗文化，深度调研滚山珠、蜡染、大方漆器、傩戏四大技艺。
+                        以青春视角记录传承故事、挖掘文化基因，用调研 + 传播 + 创新探索，让古老非遗在当代 “鎏光”，续写文化传承新篇 。
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <span class="badge bg-warning">滚山珠</span>
+                        <span class="badge bg-info">傩戏</span>
+                        <span class="badge bg-danger text-white">大方漆器</span>
+                        <span class="badge bg-primary">蜡染</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 板块2: 主题视频 -->
+    <div class="card shadow-lg mb-5">
+        <div class="card-header bg-success text-white py-3">
+            <h2 class="h4 mb-0">
+                <i class="bi bi-play-btn-fill me-2"></i>主题视频
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                <!-- 滚山珠 -->
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header bg-warning text-white">
+                            <h3 class="h5 mb-0">滚山珠</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="ratio ratio-16x9 mb-3">
+                                <video controls class="w-100 rounded">
+                                    <source src="{{ MEDIA_URL }}videos/gunshanzhu.mp4" type="video/mp4">
+                                    您的浏览器不支持视频播放
+                                </video>
+                            </div>
+                            <p class="card-text">
+                                苗族传统舞蹈，表演者手持芦笙，在倒置的碗上翻滚、跳跃，展现高超的平衡技巧和艺术表现力。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 傩戏 -->
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                            <h3 class="h5 mb-0">傩戏</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="ratio ratio-16x9 mb-3">
+                                <video controls class="w-100 rounded">
+                                    <source src="{{ MEDIA_URL }}videos/nuoxi.mp4" type="video/mp4">
+                                    您的浏览器不支持视频播放
+                                </video>
+                            </div>
+                            <p class="card-text">
+                                古老的祭祀戏剧，融合了舞蹈、音乐、戏剧等多种艺术形式，被誉为"中国戏剧的活化石"。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 大方漆器 -->
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="h5 mb-0">大方漆器</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="ratio ratio-16x9 mb-3">
+                                <video controls class="w-100 rounded">
+                                    <source src="{{ MEDIA_URL }}videos/qiqi.mp4" type="video/mp4">
+                                    您的浏览器不支持视频播放
+                                </video>
+                            </div>
+                            <p class="card-text">
+                                毕节漆器工艺源远流长，已有600多年历史。其特点是色彩鲜艳、图案精美、经久耐用。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 蜡染 -->
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="h5 mb-0">蜡染</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="ratio ratio-16x9 mb-3">
+                                <video controls class="w-100 rounded">
+                                    <source src="{{ MEDIA_URL }}videos/laran.mp4" type="video/mp4">
+                                    您的浏览器不支持视频播放
+                                </video>
+                            </div>
+                            <p class="card-text">
+                                毕节蜡染是苗族传统手工艺，以天然植物染料和蜡刀绘制图案，形成独特的蓝白相间效果。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 板块3: 实践照片 -->
+    <div class="card shadow-lg mb-5">
+        <div class="card-header bg-warning text-dark py-3">
+            <h2 class="h4 mb-0">
+                <i class="bi bi-image-fill me-2"></i>实践照片
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+                <!-- 照片1 -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/begin.jpg" class="card-img-top" style="height: 200px; object-fit: cover;" alt="在毕节非遗文化馆调研">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">出发前合照</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 照片2 -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/danke.JPG" class="card-img-top" style="height: 200px; object-fit: cover;" alt="学习漆器制作工艺">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">学习漆器制作工艺</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 照片3 -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/qiqitoge.png" class="card-img-top" style="height: 200px; object-fit: cover;" alt="学习滚山珠舞蹈">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">与漆器传承人合照</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 照片4 -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/nuoxi.jpg" class="card-img-top" style="height: 200px; object-fit: cover;" alt="记录傩戏表演过程">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">前往学习傩戏</p>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <!-- 照片5-->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/gunshanzhu.JPG" class="card-img-top" style="height: 200px; object-fit: cover;" alt="体验传统蜡染技艺">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">访谈滚山珠传承人</p>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <!-- 照片6 -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/zhijiao.jpg" class="card-img-top" style="height: 200px; object-fit: cover;" alt="团队讨论视频拍摄方案">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">与长青实践团共同支教合照</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 照片7 -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/zhijiao1.JPG" class="card-img-top" style="height: 200px; object-fit: cover;" alt="采访非遗传承人">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">支教蜡染非遗文化</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 照片8 -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="{{ MEDIA_URL }}images/laran.jpg" class="card-img-top" style="height: 200px; object-fit: cover;" alt="社会实践成果展示">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">听取学习蜡染技艺</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 板块4: 关注我们 -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-info text-white py-3">
+            <h2 class="h4 mb-0">
+                <i class="bi bi-heart-fill me-2"></i>关注我们
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-lg-3 mb-3 mb-lg-0">
+                    <h3 class="h5 mb-3">关注我们的社交媒体账号</h3>
+                    <p class="lead">
+                        获取更多非遗文化内容、幕后花絮和最新活动信息。
+                    </p>
+                </div>
+                
+                <div class="col-lg-9">
+                    <div class="bg-light p-4 rounded text-center">
+                        <div class="row g-4 align-items-center justify-content-center">
+                            <div class="col-sm-4 mb-3 mb-sm-0">
+                                <div class="p-3 bg-white rounded shadow-sm">
+                                    <img src="{{ MEDIA_URL }}qrcodes/weixin.jpg" class="qr-code img-fluid mx-auto" alt="微信公众号二维码">
+                                    <p class="small mb-0 text-center">微信公众号</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="p-2 bg-white rounded shadow-sm h-100">
+                                    <img src="{{ MEDIA_URL }}qrcodes/all.png" class="qr-code-large img-fluid mx-auto" alt="社交媒体二维码合集">
+                                    <p class="small mb-0 text-center">社交媒体合集</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 自定义样式 */
+    .avatar-lg {
+        width: 150px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .social-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        color: white !important;
+        text-decoration: none !important;
+        transition: transform 0.3s;
+    }
+    
+    .social-icon:hover {
+        transform: translateY(-5px);
+    }
+    
+    .social-icon i {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+    
+    .social-icon span {
+        font-size: 0.85rem;
+    }
+    
+    .qr-code {
+        max-width: 100%;
+        height: 350px;
+        object-fit: contain;
+        border-radius: 5px;
+    }
+    
+    .qr-code-large {
+        max-width: 100%;
+        height: 400px;
+        object-fit: contain;
+        border-radius: 5px;
+    }
+    
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #FF005C, #FF5252);
+    }
+</style>
+{% endblock %}

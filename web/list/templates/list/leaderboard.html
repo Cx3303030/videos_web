@@ -1,0 +1,452 @@
+{% extends 'list/base.html' %}
+{% load static %}
+
+{% block title %}非遗作品排行榜 - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="bg-white rounded-xl shadow-lg p-4 p-md-5 mb-5">
+        <h1 class="h2 mb-4 text-center text-primary fw-bold">
+            <i class="bi bi-trophy me-2"></i>非遗作品排行榜
+        </h1>
+        
+        <!-- 刷新控制区（优化版） -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+            <div class="text-muted mb-2 mb-md-0">
+                <i class="bi bi-clock-history me-1"></i>
+                <span id="last-refresh">最后更新：{{ last_updated|default:"刚刚" }}</span>
+                <span class="ms-2" id="auto-refresh-info">
+                    <i class="bi bi-clock me-1"></i>每 <span id="countdown-value">30</span> 秒自动刷新
+                </span>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button id="refresh-now" class="btn btn-primary btn-sm">
+                    <i class="bi bi-arrow-repeat me-1"></i>立即刷新
+                </button>
+                <button id="toggle-auto-refresh" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-pause-fill me-1"></i>暂停自动
+                </button>
+            </div>
+        </div>
+        
+        <!-- 排行榜内容（使用固定表格布局） -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" style="table-layout: fixed;">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="text-center" style="width: 8%">排名</th>
+                        <th scope="col" style="width: 32%">作品封面</th>
+                        <th scope="col" style="width: 25%">作品名称</th>
+                        <th scope="col" style="width: 15%">作者</th>
+                        <th scope="col" class="text-center" style="width: 20%">点赞数</th>
+                    </tr>
+                </thead>
+
+                <tbody id="leaderboard-body">
+                    {% for video in videos %}
+                    <tr class="{% if forloop.counter <= 3 %}top-three{% endif %}" 
+                        onclick="window.location='{% url 'video_detail' video.pk %}'">
+                        <!-- 排名列 -->
+                        <td class="text-center">
+                            {% if forloop.counter == 1 %}
+                                <span class="badge bg-warning text-dark fs-5 p-2">
+                                    <i class="bi bi-trophy-fill me-1"></i>{{ forloop.counter }}
+                                </span>
+                            {% elif forloop.counter == 2 %}
+                                <span class="badge bg-secondary text-white fs-5 p-2">
+                                    <i class="bi bi-award-fill me-1"></i>{{ forloop.counter }}
+                                </span>
+                            {% elif forloop.counter == 3 %}
+                                <span class="badge bg-bronze text-white fs-5 p-2">
+                                    <i class="bi bi-award-fill me-1"></i>{{ forloop.counter }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-light text-dark fs-6 p-2">
+                                    {{ forloop.counter }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        
+                        <!-- 封面图（添加固定尺寸容器） -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="thumbnail-container">
+                                    {% if video.thumbnail %}
+                                        <img src="{{ video.thumbnail.url }}" 
+                                            alt="封面" 
+                                            class="img-thumbnail"
+                                            onerror="this.src='{% static 'img/default-thumbnail.jpg' %}'">
+                                    {% else %}
+                                        <div class="bg-secondary rounded placeholder-container">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <!-- 作品名称（添加省略号处理） -->
+                        <td>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold text-truncate" 
+                                    data-bs-toggle="tooltip" 
+                                    title="{{ video.title }}"
+                                    style="font-size: 15px;">
+                                    {{ video.title }}
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <!-- 作者（添加固定宽度） -->
+                        <td>
+                            <span class="text-primary d-block">
+                                <i class="bi bi-person-circle me-1"></i>
+                                <span class="author-name">{{ video.author.username|truncatechars:8 }}</span>
+                            </span>
+                        </td>
+                        
+                        <!-- 点赞数 -->
+                        <td class="text-center">
+                            <span class="badge bg-danger bg-opacity-10 text-danger fw-medium p-2">
+                                <i class="bi bi-heart-fill text-danger me-1"></i>
+                                <span class="vote-count">{{ video.votes }}</span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 优化后的样式 */
+    .thumbnail-container {
+        width: 100px;
+        height: 56px; /* 保持16:9比例 */
+        overflow: hidden;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+    }
+    
+    .thumbnail-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .placeholder-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 24px;
+    }
+    
+    .top-three {
+        background: linear-gradient(90deg, rgba(255, 250, 230, 0.5), transparent);
+    }
+    
+    .bg-bronze {
+        background-color: #cd7f32;
+    }
+    
+    .author-name {
+        display: inline-block;
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: bottom;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+        .thumbnail-container {
+            width: 70px;
+            height: 40px;
+        }
+        
+        .author-name {
+            max-width: 70px;
+        }
+        
+        #auto-refresh-info {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 自动刷新状态
+let autoRefreshEnabled = true;
+let countdown = 30;
+let countdownInterval;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化工具提示
+    $('[data-bs-toggle="tooltip"]').tooltip();
+    
+    // 为移动端添加响应式标签
+    if (window.innerWidth <= 768) {
+        const headers = ['排名', '作品', '作者', '点赞数'];
+        document.querySelectorAll('#leaderboard-body tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+                cell.setAttribute('data-label', headers[index]);
+            });
+        });
+    }
+
+    // 初始化自动刷新
+    startAutoRefresh();
+    
+    // 刷新功能实现
+    const refreshNowBtn = document.getElementById('refresh-now');
+    const toggleAutoRefreshBtn = document.getElementById('toggle-auto-refresh');
+    const lastRefreshEl = document.getElementById('last-refresh');
+    const leaderboardBody = document.getElementById('leaderboard-body');
+    const countdownValue = document.getElementById('countdown-value');
+
+    // 创建加载指示器
+    function showLoading() {
+        const loadingRow = document.createElement('tr');
+        loadingRow.innerHTML = `
+            <td colspan="5" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+                <span class="ms-2 text-muted">正在刷新数据...</span>
+            </td>
+        `;
+        leaderboardBody.innerHTML = '';
+        leaderboardBody.appendChild(loadingRow);
+    }
+
+    // 刷新排行榜数据
+    function refreshLeaderboard() {
+        showLoading();
+
+        fetch('{% url "leaderboard_api" %}')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应错误');
+                }
+                return response.json();
+            })
+            .then(data => {
+                updateLeaderboard(data.videos);
+                // 更新最后刷新时间
+                const now = new Date();
+                const timeString = now.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                lastRefreshEl.textContent = `最后更新：${timeString}`;
+            })
+            .catch(error => {
+                console.error('刷新失败:', error);
+                leaderboardBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-danger">
+                            <i class="bi bi-exclamation-circle me-2"></i>刷新失败，请稍后再试
+                        </td>
+                    </tr>
+                `;
+            })
+            .finally(() => {
+                // 如果自动刷新开启，重置倒计时
+                if (autoRefreshEnabled) {
+                    countdown = 30;
+                    countdownValue.textContent = countdown;
+                    startAutoRefresh();
+                }
+            });
+    }
+
+    // 启动自动刷新计时器
+    function startAutoRefresh() {
+        clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            if (autoRefreshEnabled) {
+                countdown--;
+                countdownValue.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    refreshLeaderboard();
+                }
+            }
+        }, 1000);
+    }
+    
+    // 切换自动刷新状态
+    function toggleAutoRefresh() {
+        autoRefreshEnabled = !autoRefreshEnabled;
+        
+        if (autoRefreshEnabled) {
+            toggleAutoRefreshBtn.innerHTML = '<i class="bi bi-pause-fill me-1"></i>暂停自动';
+            toggleAutoRefreshBtn.classList.remove('btn-warning');
+            toggleAutoRefreshBtn.classList.add('btn-outline-secondary');
+            startAutoRefresh();
+        } else {
+            toggleAutoRefreshBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i>启用自动';
+            toggleAutoRefreshBtn.classList.remove('btn-outline-secondary');
+            toggleAutoRefreshBtn.classList.add('btn-warning');
+            clearInterval(countdownInterval);
+        }
+    }
+
+    // 更新排行榜内容
+    function updateLeaderboard(videos) {
+        leaderboardBody.innerHTML = '';
+
+        videos.forEach((video, index) => {
+            const row = document.createElement('tr');
+            row.className = index < 3 ? 'top-three' : '';
+            row.onclick = () => window.location.href = '{% url "video_detail" 0 %}'.replace('0', video.id);
+
+            let thumbnailContent = '';
+            if (video.thumbnail) {
+                thumbnailContent = `
+                    <img src="${video.thumbnail}" 
+                         alt="${video.title}" 
+                         class="img-thumbnail"
+                         onerror="this.src='{% static 'img/default-thumbnail.jpg' %}'">`;
+            } else {
+                thumbnailContent = `
+                    <div class="bg-secondary rounded placeholder-container">
+                        <i class="bi bi-image"></i>
+                    </div>`;
+            }
+
+            // 桌面视图
+            if (window.innerWidth > 768) {
+                row.innerHTML = `
+                    <td class="text-center">
+                        ${getRankBadge(index + 1)}
+                    </td>
+                    <td>
+                        <div class="thumbnail-container">
+                            ${thumbnailContent}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="fw-semibold text-truncate" 
+                             data-bs-toggle="tooltip" 
+                             title="${video.title}">
+                            ${video.title}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-primary d-block">
+                            <i class="bi bi-person-circle me-1"></i>
+                            <span class="author-name">${video.author}</span>
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-danger bg-opacity-10 text-danger fw-medium p-2">
+                            <i class="bi bi-heart-fill text-danger me-1"></i>${video.votes}
+                        </span>
+                    </td>
+                `;
+            } 
+            // 移动视图
+            else {
+                row.innerHTML = `
+                    <td data-label="排名" class="text-center">
+                        ${getRankBadge(index + 1)}
+                    </td>
+                    <td data-label="作品封面">
+                        <div class="thumbnail-container">
+                            ${thumbnailContent}
+                        </div>
+                    </td>
+                    <td data-label="作品名称">
+                        <div class="fw-semibold text-truncate" 
+                             data-bs-toggle="tooltip" 
+                             title="${video.title}">
+                            ${video.title}
+                        </div>
+                    </td>
+                    <td data-label="作者">
+                        <span class="text-primary">
+                            <i class="bi bi-person-circle me-1"></i>
+                            <span class="author-name">${video.author}</span>
+                        </span>
+                    </td>
+                    <td data-label="点赞数" class="text-center">
+                        <span class="badge bg-danger bg-opacity-10 text-danger fw-medium p-2">
+                            <i class="bi bi-heart-fill text-danger me-1"></i>${video.votes}
+                        </span>
+                    </td>
+                `;
+            }
+
+            leaderboardBody.appendChild(row);
+        });
+        
+        // 重新初始化工具提示
+        $('[data-bs-toggle="tooltip"]').tooltip('dispose').tooltip();
+    }
+
+    // 生成排名徽章
+    function getRankBadge(rank) {
+        if (rank === 1) {
+            return `
+                <span class="badge bg-warning text-dark fs-5 p-2">
+                    <i class="bi bi-trophy-fill me-1"></i>${rank}
+                </span>
+            `;
+        } else if (rank === 2) {
+            return `
+                <span class="badge bg-secondary text-white fs-5 p-2">
+                    <i class="bi bi-award-fill me-1"></i>${rank}
+                </span>
+            `;
+        } else if (rank === 3) {
+            return `
+                <span class="badge bg-bronze text-white fs-5 p-2">
+                    <i class="bi bi-award-fill me-1"></i>${rank}
+                </span>
+            `;
+        } else {
+            return `
+                <span class="badge bg-light text-dark fs-6 p-2">
+                    ${rank}
+                </span>
+            `;
+        }
+    }
+
+    // 绑定刷新按钮事件
+    refreshNowBtn.addEventListener('click', refreshLeaderboard);
+    
+    // 绑定自动刷新切换事件
+    toggleAutoRefreshBtn.addEventListener('click', toggleAutoRefresh);
+    
+    // 移动端额外初始化
+    if (window.innerWidth <= 768) {
+        const headers = ['排名', '作品封面', '作品名称', '作者', '点赞数'];
+        document.querySelectorAll('#leaderboard-body tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+                cell.setAttribute('data-label', headers[index]);
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

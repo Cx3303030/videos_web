@@ -1,0 +1,197 @@
+{% extends "list/base.html" %}
+
+{% block title %}作品投稿 - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- 页面标题卡片 -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0">
+                        <i class="bi bi-cloud-upload me-2"></i>作品投稿
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        请填写作品信息并上传相关文件，审核通过后将在平台展示。
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 表单主体 -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- 非遗类别智能提示 -->
+                        <datalist id="category-suggestions">
+                            <option value="漆器">
+                            <option value="蜡染">
+                            <option value="傩戏">
+                            <option value="滚山珠">
+                            <option value="剪纸">
+                            <option value="苗绣">
+                            <option value="银饰">
+                        </datalist>
+                        
+                        <!-- 基本信息部分 -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="bi bi-info-circle me-2"></i>作品基本信息
+                            </h4>
+                            
+                            <div class="row g-3">
+                                <!-- 标题 -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.title }}
+                                        <label for="{{ form.title.id_for_label }}">作品标题</label>
+                                        <div class="invalid-feedback">
+                                            请输入作品标题
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 非遗类别 -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.non_category }}
+                                        <label for="{{ form.non_category.id_for_label }}">非遗类别</label>
+                                        <div class="invalid-feedback">
+                                            请填写非遗类别
+                                        </div>
+                                    </div>
+                                    <div class="form-text">
+                                        输入后按回车或从下拉列表中选择
+                                    </div>
+                                </div>
+                                
+                                <!-- 描述 -->
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        {{ form.description }}
+                                        <label for="{{ form.description.id_for_label }}">作品描述</label>
+                                    </div>
+                                    <div class="form-text">
+                                        请描述作品的创意和与非遗文化的关联（建议10-300字）
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- 媒体上传部分 -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="bi bi-file-earmark-arrow-up me-2"></i>媒体上传
+                            </h4>
+                            
+                            <div class="row g-4">
+                                <!-- 视频上传 -->
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-primary">
+                                        <div class="card-header bg-light">
+                                            <h5 class="mb-0">{{ form.video_file.label }}</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-center mb-3">
+                                                <i class="bi bi-file-earmark-play fs-1 text-primary"></i>
+                                            </div>
+                                            {{ form.video_file }}
+                                            <div class="form-text mt-2">
+                                                {{ form.video_file.help_text }}
+                                            </div>
+                                            <!-- 文件信息预览 -->
+                                            <div class="video-info mt-3 small">
+                                                <div>文件名: <span class="name text-muted">未选择</span></div>
+                                                <div>大小: <span class="size text-muted">0 MB</span></div>
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                {{ form.video_file.errors.0 }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 封面图上传 -->
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-primary">
+                                        <div class="card-header bg-light">
+                                            <h5 class="mb-0">{{ form.thumbnail.label }}</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-center mb-3">
+                                                <i class="bi bi-image fs-1 text-primary"></i>
+                                            </div>
+                                            {{ form.thumbnail }}
+                                            <div class="form-text mt-2">
+                                                {{ form.thumbnail.help_text }}
+                                            </div>
+                                            <div class="form-text text-warning">
+                                                <i class="bi bi-info-circle"></i> 如不上传，系统将自动生成封面
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                {{ form.thumbnail.errors.0 }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 提交按钮 -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg py-3">
+                                <i class="bi bi-send-check me-2"></i>提交作品
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 表单提交前验证
+const form = document.querySelector('form.needs-validation')
+form.addEventListener('submit', function(e) {
+    if (!form.checkValidity()) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+    form.classList.add('was-validated')
+}, false)
+
+// 视频上传预览
+const videoInput = document.getElementById('id_video_file')
+videoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0]
+    const infoContainer = document.querySelector('.video-info')
+    
+    if (file) {
+        // 显示文件信息
+        const nameEl = infoContainer.querySelector('.name')
+        const sizeEl = infoContainer.querySelector('.size')
+        nameEl.textContent = file.name
+        nameEl.classList.remove('text-muted')
+        sizeEl.textContent = `${(file.size/1024/1024).toFixed(1)} MB`
+        sizeEl.classList.remove('text-muted')
+    } else {
+        infoContainer.querySelector('.name').textContent = '未选择'
+        infoContainer.querySelector('.name').classList.add('text-muted')
+        infoContainer.querySelector('.size').textContent = '0 MB'
+        infoContainer.querySelector('.size').classList.add('text-muted')
+    }
+})
+
+// 初始化显示
+videoInput.dispatchEvent(new Event('change'))
+</script>
+{% endblock %}

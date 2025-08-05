@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: chmod
+Version: 0.0.8
+Summary: Basic chmod conversion tool
+Author: Harry Sharma
+Author-email: harrysharma1066@gmail.com
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
+# chmod-calculator
+
+[![Tests](https://github.com/harrysharma1/chmod-calculator/actions/workflows/workflow.yml/badge.svg)](https://github.com/harrysharma1/chmod-calculator/actions/workflows/workflow.yml)
+
+This is a python module for calculating chmod.
+This is my first module so it will have some bugs.
+
+## How to use
+
+After running `pip install chmod`, you can use it in Python
+
+```python
+import chmod
+a = chmod.ChmodConversion()
+# Octal to Symbolic
+print(a.int_to_perm(172))
+# Symbolic to Octal
+print(a.perm_to_int("--xrwx-w-"))
+```

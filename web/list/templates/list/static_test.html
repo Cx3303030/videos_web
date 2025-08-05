@@ -1,0 +1,39 @@
+{% extends 'list/base.html' %}
+
+{% block title %}静态资源测试{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">静态资源测试</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">CSS测试</h5>
+                    <p class="card-text">如果卡片有阴影和悬停效果，说明auth.css加载成功。</p>
+                    <button class="btn btn-primary btn-lg">测试按钮</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">JavaScript测试</h5>
+                    <p class="card-text">点击下面的按钮，如果弹出提示框，说明JavaScript加载成功。</p>
+                    <button id="js-test-btn" class="btn btn-success btn-lg">测试JavaScript</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('js-test-btn').addEventListener('click', function() {
+        alert('JavaScript加载成功！');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "list/base.html" %}
+
+{% block title %}验证码验证 - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-shield-check fs-1 me-3"></i>
+                        <div>
+                            <h2 class="mb-0">验证码验证</h2>
+                            <p class="mb-0">请输入您收到的验证码</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="code">验证码</label>
+                            <input type="text" id="code" name="code" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">验证</button>
+                    </form>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} mt-3" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

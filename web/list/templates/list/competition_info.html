@@ -1,0 +1,118 @@
+{% extends "list/base.html" %}
+
+{% block title %}比赛介绍 - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0">非物质文化遗产短视频大赛</h1>
+                </div>
+                <div class="card-body">
+                    <h2 class="h4 text-primary">比赛宗旨</h2>
+                    <p>本次大赛旨在通过短视频这一现代传播形式，展现中国丰富的非物质文化遗产，包括传统技艺、表演艺术、节庆活动等多种形式。我们希望通过大学生的创意视角，让更多人了解和关注这些珍贵的文化遗产。</p>
+                    
+                    <h2 class="h4 text-primary mt-4">参赛主题</h2>
+                    <p>参赛作品需围绕"文化+微视听"的主题，创作与中国非物质文化遗产相关的创意短视频。</p>
+                                
+                    <h2 class="h4 text-primary mt-4">非遗文化介绍</h2>
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 card-title">毕节漆器</h3>
+                                    <p class="card-text">毕节漆器工艺源远流长，已有600多年历史。其特点是色彩鲜艳、图案精美、经久耐用，具有极高的艺术价值和实用价值。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 card-title">蜡染技艺</h3>
+                                    <p class="card-text">毕节蜡染是苗族传统手工艺，以天然植物染料和蜡刀绘制图案，形成独特的蓝白相间效果，被誉为"穿在身上的历史"。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 card-title">傩戏表演</h3>
+                                    <p class="card-text">傩戏是古老的祭祀戏剧，融合了舞蹈、音乐、戏剧等多种艺术形式，被誉为"中国戏剧的活化石"。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 card-title">滚山珠</h3>
+                                    <p class="card-text">滚山珠是苗族传统舞蹈，表演者手持芦笙，在倒置的碗上翻滚、跳跃，展现高超的平衡技巧和艺术表现力。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info mt-4 p-4 border border-info rounded-lg shadow-sm show">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-info-circle text-info fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="font-semibold text-info mb-1">更多非遗主题</h5>
+                                    <p class="mb-0">除以上示例外，我们欢迎所有类型的非物质文化遗产主题作品，包括但不限于传统音乐、舞蹈、戏剧、曲艺、传统体育、游艺与杂技、传统美术、传统技艺、传统医药、民俗等。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="h4 text-primary mt-4">参赛要求</h2>
+                    <ul>
+                        <li>作品时长：30秒-30分钟</li>
+                        <li>格式要求：MP4、MOV等常见视频格式</li>
+                        <li>分辨率：720p及以上</li>
+                        <li>内容要求：原创作品，不得抄袭</li>
+                        <li>投稿截止日期：2025年8月31日</li>
+                    </ul>
+                    
+                    <h2 class="h4 text-primary mt-4">奖项设置</h2>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>奖项</th>
+                                    <th>名额</th>
+                                    <th>奖励</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>一等奖</td>
+                                    <td>1名</td>
+                                    <td>奖金50元+证书</td>
+                                </tr>
+                                <tr>
+                                    <td>二等奖</td>
+                                    <td>3名</td>
+                                    <td>奖金20元+证书</td>
+                                </tr>
+                                <tr>
+                                    <td>三等奖</td>
+                                    <td>5名</td>
+                                    <td>奖金10元+证书</td>
+                                </tr>
+                                <tr>
+                                    <td>最佳创意奖</td>
+                                    <td>2名</td>
+                                    <td>奖金8元+证书</td>
+                                </tr>
+                                <tr>
+                                    <td>最佳人气奖</td>
+                                    <td>1名</td>
+                                    <td>奖金8元+证书</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "list/base.html" %}
+
+{% block title %}非物质文化遗产短视频大赛{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">非物质文化遗产短视频大赛</h1>
+        <p class="lead text-muted">传承非遗文化 · 创意视听表达</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- 比赛介绍模块 -->
+        <div class="col-md-3">
+            <div class="card module-card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="module-icon">📜</div>
+                    <h3 class="card-title">比赛介绍</h3>
+                    <p class="card-text">了解丰富的非物质文化遗产，展现传统技艺的独特魅力。</p>
+                    <a href="{% url 'competition_info' %}" class="btn btn-primary mt-3">查看详情</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 视频列表模块 -->
+        <div class="col-md-3">
+            <div class="card module-card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="module-icon">🎥</div>
+                    <h3 class="card-title">参赛作品</h3>
+                    <p class="card-text">浏览大学生创作的非遗主题短视频作品，感受文化魅力。</p>
+                    <a href="{% url 'video_list' %}" class="btn btn-primary mt-3">观看作品</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 排行榜模块 -->
+        <div class="col-md-3">
+            <div class="card module-card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="module-icon">🏆</div>
+                    <h3 class="card-title">排行榜</h3>
+                    <p class="card-text">查看当前点赞数最高的作品，为你支持的作品投票。</p>
+                    <a href="{% url 'leaderboard' %}" class="btn btn-primary mt-3">查看排名</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 新增：小队展示模块 -->
+        <div class="col-md-3">
+            <div class="card module-card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="module-icon">👥</div>
+                    <h3 class="card-title">小队展示</h3>
+                    <p class="card-text">了解我们社会实践小队的探索之旅与非遗保护成果。</p>
+                    <a href="{% url 'team_showcase' %}" class="btn btn-primary mt-3">查看详情</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
