@@ -170,7 +170,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '2543540565@qq.com' 
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
 
-
 # 日志配置
 LOGGING = {
     'version': 1,
