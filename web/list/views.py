@@ -4,7 +4,7 @@ import random
 # 会话密钥常量
 SESSION_KEY = 'registration_email_code'
 from django.shortcuts import render, get_object_or_404, redirect
-from django.core.mail import send_mail
+# 从django.core.mail导入的内容已更新，现在使用EmailMessage类
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from .forms import VideoSubmitForm
@@ -309,7 +309,16 @@ def register(request):
             from_email = settings.EMAIL_HOST_USER
             
             try:
-                send_mail(subject, message, from_email, [email])
+                # 使用EmailMessage类并明确设置UTF-8编码
+                email_message = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=[email],
+                )
+                email_message.content_subtype = 'html'
+                email_message.encoding = 'utf-8'
+                email_message.send()
                 # 将验证码和邮箱存入session
                 request.session[SESSION_KEY] = {
                     'code': code,
@@ -439,8 +448,17 @@ def forgot_password(request):
             subject = '重置密码验证码'
             message = f'您的验证码是：{code}'
             from_email = settings.EMAIL_HOST_USER
-            send_mail(subject, message, from_email, [email])
-            
+            # 使用EmailMessage类并明确设置UTF-8编码
+            email_message = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=from_email,
+                to=[email],
+            )
+            email_message.content_subtype = 'html'
+            email_message.encoding = 'utf-8'
+            email_message.send()
+            # 将验证码和邮箱存入session
             return redirect('verify_code')
         except User.DoesNotExist:
             messages.error(request, '该邮箱未注册！')
@@ -467,7 +485,16 @@ def send_registration_code(request):
 
     try:
         from_email = settings.EMAIL_HOST_USER
-        send_mail(subject, message, from_email, [email])
+        # 使用EmailMessage类并明确设置UTF-8编码
+        email_message = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=from_email,
+            to=[email],
+        )
+        email_message.content_subtype = 'html'
+        email_message.encoding = 'utf-8'
+        email_message.send()
         # 将验证码和邮箱存入session
         request.session['registration_email_code'] = {
             'code': code,

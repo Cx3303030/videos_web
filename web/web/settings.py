@@ -12,33 +12,54 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# ====== 配置加载重构 ======
+# 安全配置文件路径 (已修复路径)
+secrets_path = BASE_DIR.parent / "secure/secrets.env"  # 使用 parent 上一级目录
 
-# SECURITY WARNING: keep the secret key used in production secret!
-secrets_path = Path(__file__).parent / "secure/secrets.env"
-if secrets_path.exists():
-    with open(secrets_path) as f:
-        for line in f:
-            if '=' in line and not line.startswith('#'):
-                key, value = line.strip().split('=', 1)
-                os.environ[key] = value
+# 1. 优化配置加载逻辑
+SECRET_KEY = None
+EMAIL_HOST_PASSWORD = None
 
-SECRET_KEY = os.environ['SECRET_KEY']
+try:
+    # 尝试加载配置文件
+    if secrets_path.exists():
+        secrets = {}
+        with open(secrets_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and '=' in line and not line.startswith('#'):
+                    key, value = line.split('=', 1)
+                    secrets[key.strip()] = value.strip().strip("'\"")
+                    
+        SECRET_KEY = secrets.get('SECRET_KEY')
+        EMAIL_HOST_PASSWORD = secrets.get('EMAIL_HOST_PASSWORD')
+    
+    # 生成后备密钥
+    if not SECRET_KEY:
+        SECRET_KEY = get_random_secret_key()
+        
+    if not EMAIL_HOST_PASSWORD:
+        EMAIL_HOST_PASSWORD = '临时邮箱密码'
+        
+except Exception as e:
+    print(f"⚠️ 配置文件读取错误: {str(e)}")
+    SECRET_KEY = get_random_secret_key()
+    EMAIL_HOST_PASSWORD = '临时邮箱密码'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '60.205.128.19', 'qjlg-videos.cn', 'www.qjlg-videos.cn']  # 添加服务器IP
 
 
-# Application definition
-
+# Application definition - 已删除 django_extensions 引用
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,8 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'list.apps.ListConfig'
+    'list.apps.ListConfig'  # 确保这是您的应用名称
 ]
 
 MIDDLEWARE = [
@@ -87,8 +107,12 @@ WSGI_APPLICATION = 'web.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'project', 
+        'USER': 'mysql', 
+        'PASSWORD': 'Mysql123.',  
+        'HOST': 'localhost',  
+        'PORT': '3306', 
     }
 }
 
@@ -148,12 +172,17 @@ CSRF_COOKIE_SECURE = True  # 仅通过HTTPS传输CSRF cookie
 X_FRAME_OPTIONS = 'DENY'  # 防止点击劫持
 SECURE_BROWSER_XSS_FILTER = True  # 启用浏览器XSS过滤
 SECURE_CONTENT_TYPE_NOSNIFF = True  # 防止MIME类型嗅探
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# 设置默认字符集为UTF-8，解决邮件发送时的编码问题
+DEFAULT_CHARSET = 'utf-8'
+
 
 # 配置缓存 - 使用Redis
 # 注意：生产环境需要安装redis包 (pip install redis)
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': 'redis://127.0.0.1:6379/1',
     }
 }
@@ -168,8 +197,7 @@ EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '2543540565@qq.com' 
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
-
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD  # 使用上方加载的密码
 
 # 日志配置
 LOGGING = {

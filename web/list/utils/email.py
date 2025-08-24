@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 def send_verify_code(email, code):
     """发送邮箱验证码"""
@@ -8,4 +8,14 @@ def send_verify_code(email, code):
     from_email = settings.EMAIL_HOST_USER
     recipient_list = [email]
     
-    return send_mail(subject, message, from_email, recipient_list)
+    # 使用EmailMessage类并明确设置UTF-8编码
+    email_message = EmailMessage(
+        subject=subject,
+        body=message,
+        from_email=from_email,
+        to=recipient_list,
+    )
+    email_message.content_subtype = 'html'
+    email_message.encoding = 'utf-8'
+    
+    return email_message.send()
